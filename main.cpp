@@ -125,7 +125,7 @@ int main(int argc, char * argv[]) {
 		"output.mp4          ";
 
 	// Run the ffmpeg command and get pipe to write into its standard input stream.
-	Rectangle r(20, 10, 0x00, 0xff, 0x00);
+	Rectangle r(100, 100, 0x00, 0xff, 0x00);
 	FILE * pipe = popen(cmd, "w");
 	if (pipe == 0) {
 		cout << "error: " << strerror(errno) << endl;
