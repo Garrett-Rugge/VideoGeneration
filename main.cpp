@@ -39,20 +39,22 @@ typedef unsigned char byte;
 class Rectangle{
 	public:
 		Rectangle();
-		Rectangle(int w, int h, byte r, byte g, byte b);
+		Rectangle(int x, int y, int w, int h, byte r, byte g, byte b);
 		void clamp(int * x, int * y);
 		void clear_frame() { memset(frame, 0, sizeof(frame)); }
 		void draw_rect();
 		void draw_frame(double t);
 		bool outside_frame(int * x, int * y);	
 	private:
-		int x, y, w, h;
+		int x, y, j, k, w, h;
 		byte r, g, b;
 };
 
 using namespace std;
 
 Rectangle::Rectangle(){
+	j = 0;
+	k = 0;
 	x = 0;
 	y = 0;
 	w = 0;
@@ -61,7 +63,9 @@ Rectangle::Rectangle(){
 	g = 0x00;
 	b = 0x00;
 }
-Rectangle::Rectangle(int w, int h, byte r, byte g, byte b){
+Rectangle::Rectangle(int x, int y, int w, int h, byte r, byte g, byte b){
+	j = x;
+	k = y;
 	w = w;
 	h = h;
 	r = r;
@@ -72,8 +76,11 @@ Rectangle::Rectangle(int w, int h, byte r, byte g, byte b){
 // Expand this function to add content to the video.
 void Rectangle::draw_frame(double t) {
 	clear_frame();
-	x = 0 + t * pps;
-	y = 0 + t * pps;
+	x = j + t * pps;
+	y = k + t * pps;
+	w = 100;
+	h = 100;
+	g = 0xff;
 	draw_rect();
 }
 
@@ -125,7 +132,7 @@ int main(int argc, char * argv[]) {
 		"output.mp4          ";
 
 	// Run the ffmpeg command and get pipe to write into its standard input stream.
-	Rectangle r(100, 100, 0x00, 0xff, 0x00);
+	Rectangle r(0, 0, 100, 100, 0x00, 0xff, 0x00);
 	FILE * pipe = popen(cmd, "w");
 	if (pipe == 0) {
 		cout << "error: " << strerror(errno) << endl;
