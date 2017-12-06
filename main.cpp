@@ -46,8 +46,8 @@ class Rectangle{
 		void draw_frame(double t);
 		bool outside_frame(int * x, int * y);	
 	private:
-		int x, y, j, k, w, h;
-		byte r, g, b;
+		int x, y, j, k, w, h, width, height;
+		byte r, g, b, red, green, blue;
 };
 
 using namespace std;
@@ -66,11 +66,11 @@ Rectangle::Rectangle(){
 Rectangle::Rectangle(int x, int y, int w, int h, byte r, byte g, byte b){
 	j = x;
 	k = y;
-	w = w;
-	h = h;
-	r = r;
-	g = g;
-	b = b;
+	width = w;
+	height = h;
+	red = r;
+	green = g;
+	blue = b;
 }
 // Main drawing code.
 // Expand this function to add content to the video.
@@ -78,9 +78,11 @@ void Rectangle::draw_frame(double t) {
 	clear_frame();
 	x = j + t * pps;
 	y = k + t * pps;
-	w = 100;
-	h = 100;
-	g = 0xff;
+	w = width;
+	h = height;
+	r = red;
+	g = green;
+	b = blue;
 	draw_rect();
 }
 
@@ -133,6 +135,7 @@ int main(int argc, char * argv[]) {
 
 	// Run the ffmpeg command and get pipe to write into its standard input stream.
 	Rectangle r(0, 0, 100, 100, 0x00, 0xff, 0x00);
+	Rectangle e(200, 200, 200, 200, 0x00, 0x00, 0xff);
 	FILE * pipe = popen(cmd, "w");
 	if (pipe == 0) {
 		cout << "error: " << strerror(errno) << endl;
@@ -145,8 +148,9 @@ int main(int argc, char * argv[]) {
 		double time_in_seconds = i / frames_per_second;
 		r.draw_frame(time_in_seconds);
 		fwrite(frame, 3, W * H, pipe);
+		e.draw_frame(time_in_seconds);
+		fwrite(frame, 3, W * H, pipe);
 	}
-
 	fflush(pipe);
 	pclose(pipe);
 
